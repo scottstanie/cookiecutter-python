@@ -1,94 +1,42 @@
 ci:
-  autoupdate_commit_msg: "chore: update pre-commit hooks"
-  autofix_commit_msg: "style: pre-commit fixes"
-  autoupdate_schedule: "quarterly"
-
-exclude: "^({{cookiecutter\\.project_name}}|hooks/pre_gen_project.py$)"
+  autofix_prs: false
 
 repos:
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: "23.10.0"
-    hooks:
-      - id: black-jupyter
-
-  - repo: https://github.com/adamchainz/blacken-docs
-    rev: "1.16.0"
-    hooks:
-      - id: blacken-docs
-        additional_dependencies: [black==23.10.0]
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.1.1"
-    hooks:
-      - id: ruff
-        args: ["--fix", "--show-fixes"]
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.5.0"
+    rev: "v4.4.0"
     hooks:
-      - id: check-added-large-files
+      # https://github.com/pre-commit/pre-commit-hooks/issues/718
+      # - id: check-added-large-files  # Fails with git v1.8.3
       - id: check-case-conflict
+      - id: check-docstring-first
       - id: check-merge-conflict
-      - id: check-symlinks
       - id: check-yaml
+        args: [--allow-multiple-documents]
       - id: debug-statements
       - id: end-of-file-fixer
+      - id: file-contents-sorter
+        files: (requirements.txt)$
       - id: mixed-line-ending
-      - id: name-tests-test
-        args: ["--pytest-test-first"]
-      - id: requirements-txt-fixer
       - id: trailing-whitespace
-
-  - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: "v1.10.0"
+      
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.2
     hooks:
-      - id: rst-backticks
-      - id: rst-directive-colons
-      - id: rst-inline-touching-normal
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        types_or: [python, jupyter]
+      - id: ruff-format
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.6.1"
+    rev: "v1.4.1"
     hooks:
       - id: mypy
-        files: "(src|tests)"
-        args: []
-        additional_dependencies:
-          - click
-          - markdown-it-py
-          - pytest
-          - repo-review
-          - rich
-          - tomli
-          - types-PyYAML
+        # additional_dependencies:
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.3"
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: "6.3.0"
     hooks:
-      - id: prettier
-        types_or: [yaml, markdown, html, css, scss, javascript, json]
-        args: [--prose-wrap=always]
-
-  - repo: https://github.com/codespell-project/codespell
-    rev: "v2.2.6"
-    hooks:
-      - id: codespell
-        exclude: ^Gemfile\.lock$
-        args: ["-Lnd", "-w"]
-
-  - repo: local
-    hooks:
-      - id: disallow-caps
-        name: Disallow improper capitalization
-        language: pygrep
-        entry: PyBind|Numpy|Cmake|CCache|Github|PyTest
-        exclude: (.pre-commit-config.yaml|docs/pages/guides/style\.md)$
-      - id: disallow-bad-permalinks
-        name: Disallow _ in permalinks
-        language: pygrep
-        entry: "^permalink:.*_.*"
-      - id: cog
-        name: Cog the pages
-        language: python
-        entry: cog -P -r -I ./helpers
-        files: "^docs/pages/guides/(packaging_compiled|docs|tasks).md|^copier.yml"
-        additional_dependencies: [cogapp, cookiecutter]
+      - id: pydocstyle
+        # https://github.com/PyCQA/pydocstyle/pull/608#issuecomment-1381168417
+        additional_dependencies: ['.[toml]']
+        exclude: tests
