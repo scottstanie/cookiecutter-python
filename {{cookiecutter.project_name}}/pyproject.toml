@@ -51,6 +51,9 @@ write_to = "src/{{ cookiecutter.__project_slug }}/_version.py"
 version_scheme = "no-guess-dev" # Will not guess the next version
 
 
+[tool.ruff]
+src = ["src"]
+
 [tool.ruff.lint]
 # Enable the isort rules.
 extend-select = ["I"]
