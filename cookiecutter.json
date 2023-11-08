@@ -5,7 +5,11 @@
   "full_name": "My Name",
   "email": "me@email.com",
   "project_short_description": "A great package.",
-  "license": ["BSD", "Apache", "MIT"],
+  "license": [
+    "BSD",
+    "Apache",
+    "MIT"
+  ],
   "__year": "{% now 'utc', '%Y' %}",
   "__project_slug": "{{ cookiecutter.project_name | lower | replace('-', '_') | replace('.', '_') }}",
   "__type": "pure",
@@ -18,6 +22,8 @@
     "full_name": "Your name",
     "email": "Your email",
     "project_short_description": "A short description of your project",
-    "license": "Select a license"
+    "license": "Select a license",
+    "include_pypi": "Do you plan on creating a package on PyPI?",
+    "include_rtd": "Do you plan on creating readthedocs documentation?"
   }
 }
