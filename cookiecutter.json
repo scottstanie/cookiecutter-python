@@ -10,6 +10,14 @@
     "Apache",
     "MIT"
   ],
+  "include_pypi": [
+    "yes",
+    "no"
+  ],
+  "include_rtd": [
+    "yes",
+    "no"
+  ],
   "__year": "{% now 'utc', '%Y' %}",
   "__project_slug": "{{ cookiecutter.project_name | lower | replace('-', '_') | replace('.', '_') }}",
   "__type": "pure",
