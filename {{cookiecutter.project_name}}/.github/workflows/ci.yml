@@ -22,7 +22,7 @@ jobs:
             spec: ""
           - label: Minimum
             spec: >-
-              python=3.8
+              python=3.9
 
       fail-fast: false
     name: {% raw %}${{ matrix.os }} • ${{ matrix.deps.label }}{% endraw %}
