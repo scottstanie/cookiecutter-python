@@ -38,6 +38,7 @@ jobs:
         with:
           environment-file: environment.yml
           environment-name: {{ cookiecutter.__project_slug }}-env
+          generate-run-shell: false
           create-args: {% raw %}${{ matrix.deps.spec }}{% endraw %}
           condarc: |
             channels:
