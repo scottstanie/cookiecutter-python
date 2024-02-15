@@ -58,29 +58,69 @@ version_scheme = "no-guess-dev" # Will not guess the next version
 
 
 [tool.ruff]
-src = ["src"]
+src = ["src"]       # For known-first-party imports
+unsafe-fixes = true
 
 [tool.ruff.lint]
-# Enable the isort rules.
-extend-select = ["I"]
+select = [
+  "A",   # flake8-builtins
+  "ARG", # flake8-unused-arguments
+  "B",   # flake8-bugbear
+  "C4",  # flake8-comprehensions
+  "D",   # pydocstyle
+  "E",   # pycodestyle (errors)
+  "W",   # pycodestyle (warnings)
+  # "EM",  # flake8-errmsg
+  "EXE", # flake8-executable
+  "F",   # Pyflakes
+  "I",   # isort
+  "ISC", # flake8-implicit-str-concat
+  "N",   # pep8-naming
+  "PGH", # pygrep-hooks
+  "PIE", # flake8-pie
+  "PL",  # Pylint
+  # "PT",  # flake8-pytest-style
+  "PTH", # flake8-use-pathlib
+  "PYI", # flake8-pyi
+  "RUF", # Ruff-specific rules
+  "SIM", # flake8-simplify
+  "TRY", # tryceratops
+  "UP",  # pyupgrade
+  "YTT", # flake8-2020
+]
 
-[tool.black]
-target-version = ["py39", "py310", "py311", "py312"]
-preview = true
+ignore = [
+  "D100",   # Missing docstring in public module
+  "D104",   # Missing docstring in public package
+  "D105",   # Missing docstring in magic method
+  "D203",   # 1 blank line required before class docstring
+  "D213",   # Multi-line docstring summary should start at the second line
+  "N803",   # Argument name should be lowercase
+  "N806",   # Variable _ in function should be lowercase
+  "PIE796", # Non-unique values are redundant and likely a mistake.
+  "PLR",    # Pylint Refactor
+  "PTH123", # `open()` should be replaced by `Path.open()`
+  "PTH207", # "Replace `glob` with `Path.glob` or `Path.rglob`
+  "ISC001", # The following rules may cause conflicts when used with the formatter
+  "TRY003", # Avoid specifying long messages outside the exception
+]
 
-[tool.isort]
-profile = "black"
-known_first_party = [" {{ cookiecutter.__project_slug }}"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F403"]
+"tests/**" = ["D", "N", "PTH"]
+
+[tool.ruff.lint.flake8-unused-arguments]
+# Whether to allow unused variadic arguments, like *args and **kwargs.
+ignore-variadic-names = true
+
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 ignore_missing_imports = true
 
 
-[tool.pydocstyle]
-ignore = "D100,D102,D104,D105,D106,D107,D203,D204,D213,D413"
-
 [tool.pytest.ini_options]
 doctest_optionflags = "NORMALIZE_WHITESPACE NUMBER"
-addopts = "  --cov={{ cookiecutter.__project_slug }}  --doctest-modules --randomly-seed=1234 --ignore=scripts --ignore=docs"
+addopts = " --doctest-modules  --ignore=docs "
 filterwarnings = ["error"]

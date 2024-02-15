@@ -16,8 +16,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         deps:
-            # Note: for now we're manually adding tophu deps,
-            # will change once it's on conda forge
           - label: Latest
             spec: ""
           - label: Minimum
