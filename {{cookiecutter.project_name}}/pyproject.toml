@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=64.0", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "{{ cookiecutter.project_name }}"
@@ -9,16 +9,16 @@ authors = [
 ]
 description = "{{ cookiecutter.project_short_description }}"
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 
 classifiers = [
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python",
   "Topic :: Scientific/Engineering",
   "Typing :: Typed",
@@ -26,8 +26,7 @@ classifiers = [
 license = { file = "LICENSE.txt" }
 
 # The version will be written into a version.py upon install, auto-generated
-# see section: setuptools_scm
-# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html#dynamic-metadata
+# https://hatch.pypa.io/latest/version/#configuration
 dynamic = ["version"]
 
 dependencies = []
@@ -89,11 +88,12 @@ test = ["test"]
 docs = ["docs"]
 
 
-[tool.setuptools_scm]
-# https://github.com/pypa/setuptools_scm#configuration-parameters
-write_to = "src/{{ cookiecutter.__project_slug }}/_version.py"
-# https://github.com/pypa/setuptools_scm#version-number-construction
-version_scheme = "no-guess-dev" # Will not guess the next version
+[tool.hatch.version]
+source = "vcs"
+[tool.hatch.version.raw-options]
+version_scheme = "no-guess-dev"
+[tool.hatch.build.hooks.vcs]
+version-file = "src/{{ cookiecutter.__project_slug }}/_version.py"
 
 
 [tool.ruff]
@@ -144,7 +144,6 @@ ignore = [
   "TRY003", # Avoid specifying long messages outside the exception
 ]
 
-
 [tool.ruff.lint.per-file-ignores]
 "**/__init__.py" = ["F403"]
 "tests/**" = ["D", "N", "PTH"]
@@ -155,9 +154,8 @@ ignore-variadic-names = true
 
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 ignore_missing_imports = true
-
 
 [tool.pytest.ini_options]
 doctest_optionflags = "NORMALIZE_WHITESPACE NUMBER"
