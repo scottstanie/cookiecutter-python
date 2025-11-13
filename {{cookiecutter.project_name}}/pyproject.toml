@@ -28,8 +28,9 @@ license = { file = "LICENSE.txt" }
 # The version will be written into a version.py upon install, auto-generated
 # see section: setuptools_scm
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html#dynamic-metadata
-# dependencies will be read from text files
-dynamic = ["version", "dependencies", "optional-dependencies"]
+dynamic = ["version"]
+
+dependencies = []
 
 [project.urls]
 Homepage = "{{ cookiecutter.url }}"
@@ -41,14 +42,52 @@ Changelog = "{{ cookiecutter.url }}/releases"
 [project.scripts]
 {{ cookiecutter.__project_slug }} = "{{ cookiecutter.__project_slug }}.cli:main"
 
-[tool.setuptools.dynamic]
-dependencies = { file = ["requirements.txt"] }
 
-# extra requirements: `pip install .[docs]` or `pip install .[docs]`
-[tool.setuptools.dynamic.optional-dependencies.docs]
-file = ["docs/requirements.txt"]
-[tool.setuptools.dynamic.optional-dependencies.test]
-file = ["tests/requirements.txt"]
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "linux-64"]
+
+[tool.pixi.pypi-dependencies]
+{{ cookiecutter.project_name }} = { path = ".", editable = true }
+
+[tool.pixi.dependencies]
+python = ">=3.9"
+pip = ">=21.3"
+git = "*"
+
+[tool.pixi.tasks]
+check = "pre-commit run -a"
+test = "pytest"
+docs = "mkdocs serve"
+
+
+# pixi install -e test
+[tool.pixi.feature.test.dependencies]
+pre-commit = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-randomly = "*"
+pytest-xdist = "*"
+ruff = "*"
+
+[tool.pixi.feature.docs.dependencies]
+mkdocs = "*"
+mkdocs-gen-files = "*"
+mkdocs-jupyter = "*"
+mkdocs-literate-nav = "*"
+mkdocs-material = "*"
+pymdown-extensions = "*"
+
+# pixi install -e docs
+[tool.pixi.feature.docs.pypi-dependencies]
+mkdocstrings = { extras = ["python"] }
+mkdocs-section-index = "*"
+
+
+[tool.pixi.environments]
+test = ["test"]
+docs = ["docs"]
+
 
 [tool.setuptools_scm]
 # https://github.com/pypa/setuptools_scm#configuration-parameters
