@@ -2,7 +2,7 @@
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
-[workspace]
+[project]
 name = "{{ cookiecutter.project_name }}"
 authors = [
   { name = "{{ cookiecutter.full_name }}", email = "{{ cookiecutter.email }}" },
@@ -42,7 +42,7 @@ Changelog = "{{ cookiecutter.url }}/releases"
 {{ cookiecutter.__project_slug }} = "{{ cookiecutter.__project_slug }}.cli:main"
 
 
-[tool.pixi.project]
+[tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["osx-arm64", "linux-64"]
 
