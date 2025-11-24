@@ -14,6 +14,7 @@ def remove_path(path: str) -> None:
 
 def main() -> None:
     ci_provider = "{{ cookiecutter.__ci }}"
+    init_git = "{{ cookiecutter.__init_git }}"
     project_dir = os.path.realpath(os.curdir)
 
     github_path = os.path.join(project_dir, ".github")
@@ -25,10 +26,11 @@ def main() -> None:
     if ci_provider != "gitlab":
         remove_path(gitlab_path)
 
-    try:
-        subprocess.run(["git", "init", "--initial-branch", "main"], check=True)
-    except Exception as exc:
-        print(f"Skipping git init: {exc}")
+    if init_git == "yes":
+        try:
+            subprocess.run(["git", "init"], check=True)
+        except Exception as exc:  # noqa: BLE001
+            print(f"Skipping git init: {exc}")
 
 
 if __name__ == "__main__":
