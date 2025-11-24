@@ -1,0 +1,67 @@
+stages:
+  - test
+  - dist
+  - publish
+
+variables:
+  PY_IGNORE_IMPORTMISMATCH: "1"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - mamba/pkgs
+    - mamba/envs
+
+pytest:
+  stage: test
+  image:
+    name: mambaorg/micromamba:1.5.8
+    entrypoint: [""]
+  parallel:
+    matrix:
+      - DEPS_LABEL: "Latest"
+        CREATE_ARGS: ""
+      - DEPS_LABEL: "Minimum"
+        CREATE_ARGS: "python=3.9"
+  variables:
+    MAMBA_ROOT_PREFIX: "$CI_PROJECT_DIR/mamba"
+    PROJECT_ENV: "{{ cookiecutter.__project_slug }}-env"
+  before_script:
+    - micromamba config append channels conda-forge
+    - micromamba create -y -n "$PROJECT_ENV" -f environment.yml $CREATE_ARGS
+    - micromamba run -n "$PROJECT_ENV" pip install --no-deps .
+    - micromamba install -y -n "$PROJECT_ENV" -f tests/requirements.txt -c conda-forge
+  script:
+    - micromamba run -n "$PROJECT_ENV" pytest -n0
+
+dist:
+  stage: dist
+  image: python:3.12-slim
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+  script:
+    - python -m pip install --upgrade pip
+    - python -m pip install build twine
+    - python -m build
+    - python -m twine check dist/*
+  artifacts:
+    paths:
+      - dist
+
+publish:
+  stage: publish
+  image: python:3.12-slim
+  needs: ["dist"]
+  dependencies: ["dist"]
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - when: never
+  variables:
+    TWINE_USERNAME: "__token__"
+    TWINE_PASSWORD: "$PYPI_API_TOKEN"
+  script:
+    - python -m pip install --upgrade pip
+    - python -m pip install twine
+    - python -m twine upload dist/*

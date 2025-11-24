@@ -1,7 +1,7 @@
 {
   "project_name": "package",
   "org": "org",
-  "url": "https://github.com/{{ cookiecutter.org }}/{{ cookiecutter.project_name }}",
+  "url": "https://{{ 'gitlab.com' if cookiecutter.__ci == 'gitlab' else 'github.com' }}/{{ cookiecutter.org }}/{{ cookiecutter.project_name }}",
   "full_name": "My Name",
   "email": "me@email.com",
   "project_short_description": "A great package.",
@@ -22,16 +22,25 @@
   "__project_slug": "{{ cookiecutter.project_name | lower | replace('-', '_') | replace('.', '_') }}",
   "__type": "pure",
   "__answers": "",
-  "__ci": "github",
+  "__ci": [
+    "github",
+    "gitlab"
+  ],
+  "__init_git": [
+    "yes",
+    "no"
+  ],
   "__prompts__": {
     "project_name": "The name of your project",
-    "org": "The name of your GitHub org",
-    "url": "The url to your GitHub repository",
+    "org": "The name of your git hosting org/user",
+    "url": "The url to your git repository",
     "full_name": "Your name",
     "email": "Your email",
     "project_short_description": "A short description of your project",
     "license": "Select a license",
     "include_pypi": "Do you plan on creating a package on PyPI?",
-    "include_rtd": "Do you plan on creating readthedocs documentation?"
+    "include_rtd": "Do you plan on creating readthedocs documentation?",
+    "__ci": "Where will your repository live?",
+    "__init_git": "Initialize a git repository after generation?"
   }
 }
