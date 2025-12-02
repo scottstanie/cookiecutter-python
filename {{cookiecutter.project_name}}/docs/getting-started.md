@@ -1,10 +1,10 @@
 ## Install
 
 
-`{{cookiecutter.project_name}}` is available on conda-forge:
+`{{cookiecutter.project_name}}` is available on conda-forge and can be installed with pixi:
 
 ```bash
-mamba install -c conda-forge {{cookiecutter.project_name}}
+pixi add {{cookiecutter.project_name}}
 ```
 
 
@@ -24,50 +24,41 @@ To install locally,
 ```bash
 git clone {{cookiecutter.url}}
 ```
-2. Install dependencies:
+2. Install dependencies and the package:
 ```bash
-mamba env create --file environment.yml
+pixi install
 ```
-
-or if you have an existing environment:
-```bash
-mamba env update --name my-existing-env --file environment.yml
-```
-
-3. Install `{{cookiecutter.project_name}}` via pip:
-```bash
-mamba activate {{cookiecutter.project_name}}-env
-python -m pip install -e .
-```
-
 
 The extra packages required for testing and building the documentation can be installed:
 ```bash
-# Run "pip install -e" to install with extra development requirements
-python -m pip install -e ".[docs,test]"
+pixi install --environment test
+# or: pixi shell --environment test
+pixi install --environment docs
 ```
 
 We use [`pre-commit`](https://pre-commit.com/) to automatically run linting and formatting:
 ```bash
 # Get pre-commit hooks so that linting/formatting is done automatically
+pixi shell --environment test
 pre-commit install
 ```
 This will set up the linters and formatters to run on any staged files before you commit them.
 
 After making functional changes, you can rerun the existing tests and any new ones you have added using:
 ```bash
-python -m pytest
+pixi run -e test pytest
+# or, if in the test shell environment: pytest
 ```
 
 ### Creating Documentation
 
-We use [MKDocs](https://www.mkdocs.org/) to generate the documentation.
+We use [MkDocs](https://www.mkdocs.org/) to generate the documentation.
 The reference documentation is generated from the code docstrings using [mkdocstrings](mkdocstrings.github.io/).
 
 When adding new documentation, you can build and serve the documentation locally using:
 
 ```
-mkdocs serve
+pixi run mkdocs serve
 ```
 then open http://localhost:8000 in your browser.
 Creating new files or updating existing files will automatically trigger a rebuild of the documentation while `mkdocs serve` is running.

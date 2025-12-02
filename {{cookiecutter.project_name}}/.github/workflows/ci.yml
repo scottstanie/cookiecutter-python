@@ -31,22 +31,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup environment
-        uses: mamba-org/setup-micromamba@v1
+      - name: Setup pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
         with:
-          environment-file: environment.yml
-          environment-name: {{ cookiecutter.__project_slug }}-env
-          generate-run-shell: false
-          create-args: {% raw %}${{ matrix.deps.spec }}{% endraw %}
-          condarc: |
-            channels:
-              - conda-forge
+          pixi-version: latest
+          cache: true
       - name: Install
         run: |
-          pip install --no-deps .
-      - name: Install test dependencies
-        run: |
-          micromamba install -f tests/requirements.txt -c conda-forge
+          pixi install {% raw %}${{ matrix.deps.spec }}{% endraw %}
+          pixi run pip install --no-deps .
       - name: Test
         run: |
-          pytest -n0
+          pixi run pytest -n0

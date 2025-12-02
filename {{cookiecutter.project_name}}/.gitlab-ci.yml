@@ -9,30 +9,25 @@ variables:
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - mamba/pkgs
-    - mamba/envs
+    - .pixi
 
 pytest:
   stage: test
-  image:
-    name: mambaorg/micromamba:1.5.8
-    entrypoint: [""]
+  image: ubuntu:22.04
   parallel:
     matrix:
       - DEPS_LABEL: "Latest"
         CREATE_ARGS: ""
       - DEPS_LABEL: "Minimum"
         CREATE_ARGS: "python=3.9"
-  variables:
-    MAMBA_ROOT_PREFIX: "$CI_PROJECT_DIR/mamba"
-    PROJECT_ENV: "{{ cookiecutter.__project_slug }}-env"
   before_script:
-    - micromamba config append channels conda-forge
-    - micromamba create -y -n "$PROJECT_ENV" -f environment.yml $CREATE_ARGS
-    - micromamba run -n "$PROJECT_ENV" pip install --no-deps .
-    - micromamba install -y -n "$PROJECT_ENV" -f tests/requirements.txt -c conda-forge
+    - apt-get update && apt-get install -y curl
+    - curl -fsSL https://pixi.sh/install.sh | bash
+    - export PATH="$HOME/.pixi/bin:$PATH"
+    - pixi install $CREATE_ARGS
+    - pixi run pip install --no-deps .
   script:
-    - micromamba run -n "$PROJECT_ENV" pytest -n0
+    - pixi run pytest -n0
 
 dist:
   stage: dist
