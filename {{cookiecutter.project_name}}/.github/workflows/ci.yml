@@ -1,4 +1,4 @@
-name: Pytest, build docker image, push to GHCR
+name: CI
 
 on: [pull_request, push]
 
@@ -6,40 +6,26 @@ concurrency:
   group: {% raw %}${{ github.workflow }}-${{ github.head_ref }}{% endraw %}
   cancel-in-progress: true
 
-env:
-  # https://github.com/pytest-dev/pytest/issues/2042#issuecomment-429289164
-  PY_IGNORE_IMPORTMISMATCH: 1
-
 jobs:
   pytest:
     strategy:
+      # TODO: use multiple environments
+      # https://pixi.prefix.dev/dev/integration/ci/github_actions/#multiple-environments
+      # Setup with pixi rather than GHA
       matrix:
         os: [ubuntu-latest, macos-latest]
-        deps:
-          - label: Latest
-            spec: ""
-          - label: Minimum
-            spec: >-
-              python=3.9
-
       fail-fast: false
-    name: {% raw %}${{ matrix.os }} • ${{ matrix.deps.label }}{% endraw %}
+    name: {% raw %}${{ matrix.os }}{% endraw %}
     runs-on: {% raw %}${{ matrix.os }}{% endraw %}
     defaults:
       run:
         shell: bash -l {0}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup pixi
-        uses: prefix-dev/setup-pixi@v0.8.1
+        uses: actions/checkout@v6
+      # https://pixi.prefix.dev/dev/integration/ci/github_actions/
+      - uses: prefix-dev/setup-pixi@v0.9.3
         with:
-          pixi-version: latest
+          pixi-version: v0.62.2
           cache: true
-      - name: Install
-        run: |
-          pixi install {% raw %}${{ matrix.deps.spec }}{% endraw %}
-          pixi run pip install --no-deps .
-      - name: Test
-        run: |
-          pixi run pytest -n0
+      - run: pixi run -e test test
